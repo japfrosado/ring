@@ -808,6 +808,7 @@ class frFunctions
 	 * Returns		: 
 	 *			: 
 	 * Author	 	: Jar C 08.01.2018
+	 *			: Jar U 02.01.2018 Add "@L" function
 	 */
 
 	func frTransform(tuExpression, tcFormatCodes) {
@@ -840,22 +841,27 @@ class frFunctions
 					laPictureCodes = ["9", "X", "!", "x", "A", "a", "#"]
 				
 					if Len(this.frAllTrim(lcFunction, Null)) = 2 {
-						if Left(lcFunction, 2) = "@!" and llOk {
+						if llOk and Left(lcFunction, 2) = "@!" {
 							llOk = False
 							tcReturnValue = this._process_format_for_string(Upper(tuExpression), lcFormat, laPictureCodes)
-						else
-							if Left(lcFunction, 2) = "@T" and llOk {
-								llOk = False
+						}
+						if llOk and Left(lcFunction, 2) = "@T" {
+							llOk = False
 								
-								/*
-								 * This was the original code but the compiler returns an error. 
-								 * However the problem was solved with two lines of code instead one.
-								 *
-								 * tcReturnValue = this._process_format_for_string(this.frAllTrim(tuExpression, Null), lcFormat, laPictureCodes)
-								 */
-								lcValue = this.frAllTrim(tuExpression, Null)
-								tcReturnValue = this._process_format_for_string(lcValue, lcFormat, laPictureCodes)
-							}
+							/*
+							 * This was the original code but the compiler returns an error. 
+							 * However the problem was solved with two lines of code instead one.
+							 *
+							 * tcReturnValue = this._process_format_for_string(this.frAllTrim(tuExpression, Null), lcFormat, laPictureCodes)
+							 */
+							lcValue = this.frAllTrim(tuExpression, Null)
+							tcReturnValue = this._process_format_for_string(lcValue, lcFormat, laPictureCodes)
+						}
+						if llOk and Left(lcFunction, 2) = "@L" {
+							llOk = False
+							lcValue = this.frAllTrim(tuExpression, Null)
+							tcReturnValue = this.frPadL(this.frAllTrim(this._process_format_for_string(lcValue, lcFormat, laPictureCodes), 
+												Null), Len(lcFormat), "0")
 						}
 					else
 						if Len(this.frAllTrim(lcFunction, Null)) = 3 {
@@ -871,14 +877,14 @@ class frFunctions
 						
 						if Len(this.frAllTrim(lcFunction, Null)) = 2 {
 
-							if Left(lcFunction, 2) = "@B"  and llOk {
+							if llOk and Left(lcFunction, 2) = "@B" {
 								llOk = False
 								lcValue = this.frAllTrim(tuExpression, Null)
 								lcValue = this.frPadR(lcValue, 16, Null)
 								tcReturnValue = this._process_format_for_numeric(lcValue, lcFormat, laPictureCodes)
 							}
 							
-							if Left(lcFunction, 2) = "@C"  and llOk {
+							if llOk and Left(lcFunction, 2) = "@C" {
 								llOk = False
 								lcValue = this.frAllTrim(tuExpression, Null)
 								lcValue = this.frPadL(lcValue, 19, Null)
@@ -887,6 +893,15 @@ class frFunctions
 									tcReturnValue += " CR"
 								}
 							}
+							
+							if llOk and Left(lcFunction, 2) = "@L" {
+								llOk = False
+								lcValue = this.frAllTrim(tuExpression, Null)
+								lcValue = this.frPadR(lcValue, 16, Null)
+								tcReturnValue = this.frPadL(this.frAllTrim(this._process_format_for_numeric(lcValue, lcFormat, laPictureCodes), 
+																Null), Len(lcFormat), "0")
+							}
+							
 						}
 						
 						if Len(this.frAllTrim(lcFunction, Null)) = 0 {
